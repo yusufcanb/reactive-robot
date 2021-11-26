@@ -1,0 +1,5 @@
+service_name: RX Robot
+service_version: 1.0.0
+
+connector:
+  class: rx_robot.connectors.RabbitMQConnector
