@@ -6,7 +6,7 @@
 
 ## Mission
 
-This project aims to turning Robot Framework projects into event-driven services using popular event sources (RabbitMQ, Kafka, MQTT).
+This project aims to turning Robot Framework projects into event-driven services using popular message brokers like RabbitMQ, Kafka or MQTT.
 
 ## Usage
 
