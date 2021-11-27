@@ -81,9 +81,11 @@ def load_config(config_file=None, **kwargs):
     config_schema = RxRobotConfigSchema()
     with _open_config_file(config_file) as fd:
         data = yaml.safe_load(fd)
+        log.debug("Reading YAML file, %s " % data)
         try:
-            dump = config_schema.load(data)
+            dump = config_schema.load(data, unknown=True)
         except ValidationError as e:
             raise InvalidConfigurationFileException(e.messages)
 
+    log.debug("Using schema %s" % dump)
     return dump

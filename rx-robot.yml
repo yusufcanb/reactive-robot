@@ -1,5 +1,26 @@
-service_name: RX Robot
+service_name: Robot Bob
 service_version: 1.0.0
 
 connector:
-  class: rx_robot.connectors.RabbitMQConnector
+  driver: rx_robot.connectors.RabbitMQConnector
+  connection_url: amqp://roc:roc@localhost:5672
+
+s3:
+  url: localhost
+  bucket_name: default
+  access_key: none
+  access_secret: none
+
+bindings:
+  - name: Process Invoice
+    topic: invoice
+    robot:
+      file: tests/robots/basic.robot
+      args: null
+
+  - name: Process Images
+    topic: image
+    robot:
+      file: tests/robots/basic.robot
+      args: null
+
