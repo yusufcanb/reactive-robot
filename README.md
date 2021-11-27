@@ -23,7 +23,7 @@ connector:
 
 bindings:
   - name: Example Task
-    topic: invoice
+    topic: robot-queue
     robot:
       file: your-robots/example.robot
       args: null
