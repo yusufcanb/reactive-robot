@@ -1,4 +1,4 @@
-from rx_robot.parsers.base import BaseParser
+from reactive_robot.parsers.base import BaseParser
 
 
 class StringParser(BaseParser):

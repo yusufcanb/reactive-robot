@@ -1,10 +1,10 @@
 import logging
 import click
 
-from rx_robot import PKG_DIR, PYTHON_VERSION, __version__
-from rx_robot.config.base import load_config
-from rx_robot.log import Log
-from rx_robot.serve import serve
+from reactive_robot import PKG_DIR, PYTHON_VERSION, __version__
+from reactive_robot.config.base import load_config
+from reactive_robot.log import Log
+from reactive_robot.serve import serve
 
 
 def add_options(opts):

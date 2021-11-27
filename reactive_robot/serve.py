@@ -4,7 +4,7 @@ from importlib.metadata import import_module
 
 import aio_pika
 
-logger = logging.getLogger("rx_robot.serve")
+logger = logging.getLogger("reactive_robot.serve")
 
 
 async def run_task(connection, topic=None, robot=None, **kwargs):

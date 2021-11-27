@@ -2,7 +2,7 @@ service_name: Robot Bob
 service_version: 1.0.0
 
 connector:
-  driver: rx_robot.connectors.RabbitMQConnector
+  driver: reactive_robot.connectors.rabbitmq.RabbitMQConnector
   connection_url: amqp://roc:roc@localhost:5672
 
 s3:

@@ -1,4 +1,4 @@
-from rx_robot.connectors.base import Connector
+from reactive_robot.connectors.base import Connector
 
 
 class RabbitMqConnector(Connector):

@@ -5,10 +5,10 @@ from contextlib import contextmanager
 
 from marshmallow.exceptions import ValidationError
 
-from rx_robot.config.schema import RxRobotConfigSchema
-from rx_robot.exceptions import InvalidConfigurationFileException, ConfigurationFileNotExists
+from reactive_robot.config.schema import RxRobotConfigSchema
+from reactive_robot.exceptions import InvalidConfigurationFileException, ConfigurationFileNotExists
 
-log = logging.getLogger('rx_robot.config')
+log = logging.getLogger('reactive_robot.config')
 
 
 @contextmanager
@@ -17,7 +17,7 @@ def _open_config_file(config_file):
     A context manager which yields an open file descriptor ready to be read.
 
     Accepts a filename as a string, an open or closed file descriptor, or None.
-    When None, it defaults to `rx-robot.yml` in the CWD. If a closed file descriptor
+    When None, it defaults to `reactive-robot.yml` in the CWD. If a closed file descriptor
     is received, a new file descriptor is opened for the same file.
 
     The file descriptor is automatically closed when the context manager block is existed.
@@ -25,7 +25,7 @@ def _open_config_file(config_file):
 
     # Default to the standard config filename.
     if config_file is None:
-        paths_to_try = ['rx-robot.yml', 'rx-robot.yaml']
+        paths_to_try = ['reactive-robot.yml', 'reactive-robot.yaml']
     # If it is a string, we can assume it is a path and attempt to open it.
     elif isinstance(config_file, str):
         paths_to_try = [config_file]
@@ -65,7 +65,7 @@ def load_config(config_file=None, **kwargs):
     Load the configuration for a given file object or name
 
     The config_file can either be a file object, string or None. If it is None
-    the default `rx-robot.yml` filename will loaded.
+    the default `reactive-robot.yml` filename will loaded.
 
     Extra kwargs are passed to the configuration to replace any default values
     unless they themselves are None.

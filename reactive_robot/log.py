@@ -6,7 +6,7 @@ class Log(object):
     Maintain logging level
     """
 
-    def __init__(self, log_name='rx_robot', level=logging.INFO):
+    def __init__(self, log_name='reactive_robot', level=logging.INFO):
         self.logger = logging.getLogger(log_name)
         self.logger.setLevel(1)
         self.logger.propagate = False
