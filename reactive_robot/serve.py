@@ -10,7 +10,7 @@ logger = logging.getLogger("reactive_robot.serve")
 async def run_task(connection, topic=None, robot=None, **kwargs):
     async with connection:
         channel = await connection.channel()
-        queue = await channel.declare_queue(topic, auto_delete=True)
+        queue = await channel.declare_queue(topic, auto_delete=False, durable=True)
 
         async with queue.iterator() as queue_iter:
             async for message in queue_iter:
@@ -42,9 +42,21 @@ def serve(config):
         logger.error("Robot Framework not installed in active Python interpreter")
         raise Exception("Robot Framework not installed")
 
+    connector_module = config["connector"]["driver"].split(".")[:-1]
+    connector_cls = config["connector"]["driver"].split(".").pop()
+    try:
+        Klass = getattr(import_module(".".join(connector_module)), connector_cls)
+        connector = Klass()
+    except ImportError:
+        logger.error("Failed to inject %s class" % config["connector"]["driver"])
+        raise Exception("Failed to inject %s class" % config["connector"]["driver"])
+
+    connector.configure()
+
     loop = asyncio.get_event_loop()
 
-    logger.info("Event loop started. Waiting for events.")
-    loop.run_until_complete(main(loop, config["connector"]["connection_url"], config["bindings"]))
+    coroutine = loop.run_in_executor(None, lambda: connector.run())
+    logger.info("%s service started. Waiting for events." % config["service_name"])
+    loop.run_until_complete(coroutine)
 
     loop.close()
