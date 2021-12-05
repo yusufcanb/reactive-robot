@@ -1,10 +1,11 @@
 from reactive_robot.parsers.base import BaseParser
 
 
-class StringParser(BaseParser):
+class RawPayloadParser(BaseParser):
 
     def get_variables(self, message: bytes):
-        pass
-
-    def get_headers(self, message: bytes):
-        pass
+        if message:
+            variables = message.decode("utf-8").split()
+            return variables
+        else:
+            return []

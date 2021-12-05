@@ -1,5 +1,7 @@
 from marshmallow import Schema, fields, post_load
 
+from reactive_robot.models import ReactiveRobotModel
+
 
 class ConnectorSchema(Schema):
     driver = fields.String()
@@ -37,4 +39,4 @@ class RxRobotConfigSchema(Schema):
 
     @post_load
     def post_validation(self, data, **kwargs):
-        return data
+        return ReactiveRobotModel.from_dict(**data)

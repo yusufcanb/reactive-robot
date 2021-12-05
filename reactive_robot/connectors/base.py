@@ -1,8 +1,14 @@
+import logging
 from abc import ABC, abstractmethod
-from asyncio import AbstractEventLoop
 from collections.abc import Iterable
+from concurrent.futures.thread import ThreadPoolExecutor
+from urllib.parse import ParseResult
 
-from reactive_robot.bindings import AbstractBinding
+from reactive_robot.constants import MAX_WORKER
+from reactive_robot.models import BindingModel
+from reactive_robot.parsers.base import BaseParser
+
+logger = logging.getLogger("reactive_robot.connectors.base")
 
 
 class Connector(ABC):
@@ -11,13 +17,13 @@ class Connector(ABC):
     Connectors are for handling to event source configurations.
     """
 
-    event_loop: AbstractEventLoop
-    bindings: Iterable[AbstractBinding]
+    bindings: Iterable[BindingModel]
+    variable_parser: BaseParser
+    executor = ThreadPoolExecutor(max_workers=MAX_WORKER)
 
-    def __init__(self, loop=None, bindings=None):
-        self.event_loop = loop
-        self.bindings = bindings
+    def __init__(self):
+        logger.info("Thread executor initialized with %s workers" % MAX_WORKER)
 
     @abstractmethod
-    def bind(self, loop: AbstractEventLoop, bindings: Iterable[AbstractBinding]):
+    def bind(self, connection_url: ParseResult, bindings: Iterable[BindingModel]):
         raise NotImplemented

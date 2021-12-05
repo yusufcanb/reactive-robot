@@ -4,8 +4,6 @@ Library                 RequestsLibrary
 *** Test Cases ***
 
 Quick Get Request Test
-    #Log                 ${TEST_VAR}
-    #Log to Console      ${TEST_VAR}
     ${response}=        GET         https://www.google.com/
 
 Quick Get Request With Parameters Test
