@@ -1,4 +1,8 @@
 from abc import ABC, abstractmethod
+from asyncio import AbstractEventLoop
+from collections.abc import Iterable
+
+from reactive_robot.bindings import AbstractBinding
 
 
 class Connector(ABC):
@@ -7,10 +11,13 @@ class Connector(ABC):
     Connectors are for handling to event source configurations.
     """
 
-    @abstractmethod
-    def configure(self):
-        raise NotImplemented()
+    event_loop: AbstractEventLoop
+    bindings: Iterable[AbstractBinding]
+
+    def __init__(self, loop=None, bindings=None):
+        self.event_loop = loop
+        self.bindings = bindings
 
     @abstractmethod
-    def run(self):
-        raise NotImplemented()
+    def bind(self, loop: AbstractEventLoop, bindings: Iterable[AbstractBinding]):
+        raise NotImplemented

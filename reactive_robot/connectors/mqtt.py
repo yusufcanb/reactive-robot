@@ -1,40 +1,45 @@
-import asyncio
+import logging
+import time
 
 import paho.mqtt.client as mqtt
 
 from .base import Connector
 
+logger = logging.getLogger("reactive_robot.connectors.mqtt")
 
-class MyMQTTClass(Connector, mqtt.Client):
-    channel: str
 
-    def __init__(self, channel="$SYS/#"):
-        self.channel = channel
-        super(MyMQTTClass, self).__init__()
+class MQTTConnector(mqtt.Client, Connector):
+
+    def __init__(self, *args, **kwargs):
+        super(MQTTConnector, self).__init__(*args, **kwargs)
 
     def on_connect(self, mqttc, obj, flags, rc):
-        print("rc: " + str(rc))
+        logger.info("rc: " + str(rc) + "rc")
 
     def on_connect_fail(self, mqttc, obj):
-        print("Connect failed")
+        logger.error("MQTT broker connection failed")
 
     def on_message(self, mqttc, obj, msg):
-        print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+        logger.info(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+        from robot import run, run_cli
+        self.event_loop.run_in_executor(None, lambda: run_cli(
+            ["--name", time.time(), "--outputdir", ".output/%s" % time.time(), "tests/robots/http.robot"]))
 
     def on_publish(self, mqttc, obj, mid):
-        print("mid: " + str(mid))
+        logger.debug("mid: " + str(mid))
 
     def on_subscribe(self, mqttc, obj, mid, granted_qos):
-        print("Subscribed: " + str(mid) + " " + str(granted_qos))
+        logger.info("Subscribed: " + str(mid) + " " + str(granted_qos))
 
     def on_log(self, mqttc, obj, level, string):
-        print(string)
+        logger.debug(string)
 
-    def configure(self):
+    def bind(self, loop=None, bindings=None):
+        self.event_loop = loop
+        self.bindings = bindings
+
         self.connect("localhost", 1883, 60)
-
-    def run(self):
-        self.subscribe("python/mqtt/1")
+        self.subscribe("hello-world")
 
         rc = 0
         while rc == 0:
@@ -43,7 +48,5 @@ class MyMQTTClass(Connector, mqtt.Client):
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    mqttc = MyMQTTClass("python/mqtt/1")
-    coroutine = loop.run_in_executor(None, lambda: mqttc.run())
-    loop.run_until_complete(coroutine)
+    mqttc = MQTTConnector()
+    mqttc.run()
