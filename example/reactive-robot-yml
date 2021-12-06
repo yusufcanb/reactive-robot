@@ -1,0 +1,13 @@
+service_name: Example Service
+service_version: 1.0.0
+
+connector:
+  driver: reactive_robot.connectors.mqtt.MQTTConnector
+  connection_url: mqtt://localhost:1883
+
+bindings:
+  - name: Basic Robot
+    topic: basic
+    robot:
+      file: tasks/basic.robot
+      args: null

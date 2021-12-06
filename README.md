@@ -1,4 +1,4 @@
-# Reactive Robot (⚡️🤖)
+# Reactive Robot (⚡ 🤖)
 
 <!-- ![pypi-badge](https://img.shields.io/pypi/v/reactive-robot) -->
 
@@ -10,7 +10,7 @@ This project aims to turning Robot Framework projects into event-driven services
 
 ## Usage
 
-Create a definiton file called `reactive-robot.yml` then paste following configuration;
+Create a definition file called `reactive-robot.yml` then paste following configuration;
 
 ```yaml
 
@@ -18,8 +18,8 @@ service_name: Example Robot Service
 service_version: 1.0.0
 
 connector:
-  driver: reactive_robot.connectors.rabbitmq.RabbitMQConnector
-  connection_url: amqp://guest:guest@localhost:5672
+  driver: reactive_robot.connectors.rabbitmq.MQTTConnector
+  connection_url: mqtt://localhost:1883
 
 bindings:
   - name: Example Task
@@ -44,5 +44,54 @@ $ python -m reactive_robot serve
 2021-11-27 18:22:58,518 - [INFO] - reactive_robot.serve::serve::47 - Event loop started. Waiting for events.
 ```
 
+Finally publish a message to see your robots running.
+
+## Recipes
+
+### Dockerize your service
+
+Here you can find an example Dockerfile to convert your Robot Framework projects into dockerized event-driven service 
+
+```dockerfile
+FROM robotframework/rfdocker
+
+WORKDIR /opt/service
+
+COPY . /opt/service
+RUN pip install -r requirements.txt  # Your project dependencies.
+
+# reactive-robot setup
+COPY reactive-robot.yml .
+RUN pip install reactive-robot
+
+CMD ["python", "-m", "reactive-robot", "serve"]
+```
+
+Then, we can build the image with following;
+
+```
+docker build -t robot-service:1.0.0 .
+```
+
+Finally, run your service;
+
+```
+docker run -it robot-service:1.0.0
+```
 
 
+## License
+
+Distributed under the Apache License 2.
+See `LICENSE` for more information.
+
+## Contributing
+
+Contributions are what make the open source community such an amazing place to be learn, inspire, and create.
+Any contributions are **appreciated**.
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/some-feature`)
+3. Commit your Changes (`git commit -m 'some feature added'`)
+4. Push to the Branch (`git push origin feature/some-feature`)
+5. Open a Pull Request

@@ -23,3 +23,9 @@ bindings:
     robot:
       file: tests/robots/basic.robot
       args: null
+
+  - name: Process Images
+    topic: image/process
+    robot:
+      file: tests/robots/basic.robot
+      args: null
