@@ -48,6 +48,8 @@ Finally publish a message to see your robots running.
 
 ## Recipes
 
+In the [example/](./example) directory you can find an example project which implements all recipes.
+
 ### Dockerize your service
 
 Here you can find an example Dockerfile to convert your Robot Framework projects into dockerized event-driven service 
