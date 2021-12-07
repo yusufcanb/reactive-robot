@@ -1,4 +1,5 @@
 import logging
+
 import click
 
 from reactive_robot import PKG_DIR, PYTHON_VERSION, __version__
@@ -57,7 +58,7 @@ common_config_options = add_options([
 @common_options
 def cli():
     """
-    RxRobot - Bind your robots with popular event streams (RabbitMQ, Kafka).
+    Reactive Robot - Fastest way to turn your robot workflows into event driven service.
     """
 
 
