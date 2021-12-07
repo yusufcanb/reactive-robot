@@ -6,7 +6,7 @@
 
 ## Mission
 
-This project aims to turning Robot Framework projects into event-driven services using popular message brokers like RabbitMQ, Kafka or MQTT.
+This project aims to turn Robot Framework projects into event-driven services using popular message brokers like RabbitMQ, Kafka or MQTT.
 
 ## Usage
 
@@ -18,7 +18,7 @@ service_name: Example Robot Service
 service_version: 1.0.0
 
 connector:
-  driver: reactive_robot.connectors.rabbitmq.MQTTConnector
+  driver: reactive_robot.connectors.mqtt.MQTTConnector
   connection_url: mqtt://localhost:1883
 
 bindings:
@@ -44,8 +44,11 @@ $ python -m reactive_robot serve
 2021-11-27 18:22:58,518 - [INFO] - reactive_robot.serve::serve::47 - Event loop started. Waiting for events.
 ```
 
-Finally publish a message to see your robots running.
+Finally publish a message to see your robots are running.
 
+```
+python tests/mqtt/publish.py localhost 1883
+```
 ## Recipes
 
 In the [example/](./example) directory you can find an example project which implements all recipes.
