@@ -10,3 +10,5 @@ services:
     build:
       dockerfile: Dockerfile
       context: .
+    depends_on:
+      - mqtt-broker
