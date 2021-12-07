@@ -12,11 +12,12 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.6"
 click = "^8.0.3"
+colorlog = "^6.6.0"
 importlib-metadata = "^4.8.2"
-pika = "^1.2.0"
-paho-mqtt = "^1.6.1"
 marshmallow = "^3.14.1"
 minio = "^7.1.1"
+pika = "^1.2.0"
+paho-mqtt = "^1.6.1"
 PyYAML = "^6.0"
 
 
