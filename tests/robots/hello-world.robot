@@ -1,7 +1,7 @@
 *** Settings ***
 Library                 RequestsLibrary
 Library                 Process
-Suite Setup              Log to Console           ${TEST_VAR}
+Suite Setup             Log to Console           ${TEST_VAR}
 
 *** Variable ***
 ${PORT}                 1234

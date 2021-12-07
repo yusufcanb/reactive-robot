@@ -1,58 +1,51 @@
-import asyncio
-import logging
-from importlib.metadata import import_module
+import subprocess
+import tempfile
+import pika
 
-import aio_pika
+from typing import Iterable
+from urllib.parse import ParseResult
 
 from reactive_robot.connectors.base import Connector
+from reactive_robot.models import BindingModel
 
-logger = logging.getLogger("connectors.rabbitmq")
+import logging
+
+logger = logging.getLogger("reactive_robot.connectors.rabbitmq")
 
 
-class RabbitMqConnector(Connector):
-    """
-    RabbitMQ connector for handling events via RabbitMQ queues.
-    """
+class RabbitMQConnector(Connector):
 
-    async def run_task(self, connection, topic=None, robot=None, **kwargs):
-        async with connection:
-            channel = await connection.channel()
-            queue = await channel.declare_queue(topic, auto_delete=True)
+    def _run_robot(self, topic, message):
+        for b in self.bindings:
+            if b.topic == topic:
+                with tempfile.TemporaryDirectory() as tmpdirname:
+                    cmd = " ".join(["robot",
+                                    "--outputdir", tmpdirname,
+                                    b.robot.file])
 
-            async with queue.iterator() as queue_iter:
-                async for message in queue_iter:
-                    logger.info("Received message headers: %s, body: %s " % (message.headers, str(message.body)))
-                    logger.info("%s will be executed with args: %s", robot["file"], robot["args"])
-                    async with message.process():
-                        robotframework = import_module("robot")
-                        robotframework.run(robot["file"])
+                    logger.info("Executing cmd, %s" % cmd)
+                    result = subprocess.run(cmd.split(" "))
+                    logger.info("Execution finished with return code %s" % result.returncode)
 
-        async def main(self, loop, connection_url, bindings=None):
-            if bindings is None:
-                bindings = []
+    def _map_binding(self, channel, binding: BindingModel):
+        channel.exchange_declare(exchange=binding.topic, exchange_type='fanout')
 
-            connection = await aio_pika.connect_robust(connection_url, loop=loop)
+        result = channel.queue_declare(queue='', exclusive=True)
+        queue_name = result.method.queue
 
-            tasks = []
-            for binding in bindings:
-                tasks.append(self.run_task(connection, **binding))
+        channel.queue_bind(exchange=binding.topic, queue=queue_name)
+        channel.basic_consume(queue=queue_name, on_message_callback=self.on_message, auto_ack=True)
 
-            await asyncio.wait(tasks)
+    def on_message(self, ch, method, properties, body):
+        logger.info("Received message %s from channel %s" % (body, method.exchange))
+        self.executor.submit(lambda: self._run_robot(method.exchange, body))
 
-    def serve(config):
-        try:
-            robot = import_module("robot")
-            logger.info("Using Robot Framework v%s" % robot.version.get_full_version())
-        except ImportError:
-            logger.error("Robot Framework not installed in active Python interpreter")
-            raise Exception("Robot Framework not installed")
+    def bind(self, connection_url: ParseResult, bindings: Iterable[BindingModel]):
+        connection = pika.BlockingConnection(pika.URLParameters(connection_url.geturl()))
+        self.bindings = bindings
 
-        loop = asyncio.get_event_loop()
+        channel = connection.channel()
+        for binding in bindings:
+            self._map_binding(channel, binding)
 
-        logger.info("Event loop started. Waiting for events.")
-        # loop.run_until_complete(main(loop, config["connector"]["connection_url"], config["bindings"]))
-
-        loop.close()
-
-    def bind(self, loop, bindings):
-        pass
+        channel.start_consuming()
