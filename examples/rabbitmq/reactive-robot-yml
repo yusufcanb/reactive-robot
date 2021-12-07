@@ -1,0 +1,13 @@
+service_name: Demo Robot Service (RabbitMQ)
+service_version: 1.0.0
+
+connector:
+  driver: reactive_robot.connectors.rabbitmq
+  connection_url: mqtt://mqtt-broker:1883
+
+bindings:
+  - name: Basic Robot
+    topic: basic
+    robot:
+      file: tasks/basic.robot
+      args: null

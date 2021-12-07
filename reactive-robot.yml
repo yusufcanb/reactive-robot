@@ -1,9 +1,9 @@
-service_name: Robot Bob
+service_name: Dalek
 service_version: 1.0.0
 
 connector:
-  driver: reactive_robot.connectors.mqtt.MQTTConnector
-  connection_url: mqtt://localhost:1883
+  driver: reactive_robot.connectors.rabbitmq.RabbitMQConnector
+  connection_url: amqp://roc:roc@localhost:5672
 
 s3:
   url: localhost
@@ -13,19 +13,13 @@ s3:
 
 bindings:
   - name: Hello World
-    topic: hello-world
+    topic: robot.hw
     robot:
       file: tests/robots/hello-world.robot
       args: null
 
   - name: Basic Robot
-    topic: basic
-    robot:
-      file: tests/robots/basic.robot
-      args: null
-
-  - name: Process Images
-    topic: image/process
+    topic: robot.basic
     robot:
       file: tests/robots/basic.robot
       args: null

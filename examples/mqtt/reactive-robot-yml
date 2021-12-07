@@ -1,4 +1,4 @@
-service_name: Example Service
+service_name: Demo Robot Service (MQTT)
 service_version: 1.0.0
 
 connector:

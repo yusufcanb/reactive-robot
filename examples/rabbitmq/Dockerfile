@@ -3,7 +3,7 @@ FROM robotframework/rfdocker
 WORKDIR /opt/service
 
 # project setup
-COPY . /opt/service
+COPY .. /opt/service
 RUN pip install -r requirements.txt
 
 # reactive-robot setup

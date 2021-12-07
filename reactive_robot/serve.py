@@ -38,7 +38,8 @@ def serve(config: ReactiveRobotModel):
     coroutine = loop.run_in_executor(None, lambda: connector.bind(connection_url=config.connector.connection_url,
                                                                   bindings=config.bindings))
 
-    logger.info("%s v%s service started. Waiting for events." % (config.service_name, config.service_version))
+    logger.info(
+        "%s Service Version %s has been started. Waiting for events." % (config.service_name, config.service_version))
     loop.run_until_complete(coroutine)
 
     loop.close()

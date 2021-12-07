@@ -25,7 +25,7 @@ bindings:
   - name: Example Task
     topic: robot-queue
     robot:
-      file: your-robots/example.robot
+      file: your-robots/examples.robot
       args: null
 ```
 
@@ -49,9 +49,18 @@ Finally publish a message to see your robots are running.
 ```
 python tests/mqtt/publish.py localhost 1883
 ```
+## Examples
+
+### Robot Service with MQTT Broker
+
+```
+cd examples/mqtt
+docker-compose up
+```
+
 ## Recipes
 
-In the [example/](./example) directory you can find an example project which implements all recipes.
+In the [examples/](examples) directory you can find example projects which implements all recipes below;
 
 ### Dockerize your service
 

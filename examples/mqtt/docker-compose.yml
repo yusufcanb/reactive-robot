@@ -1,0 +1,12 @@
+version: "3"
+services:
+  mqtt-broker:
+    image: hivemq/hivemq4
+    container_name: mqtt-broker
+    ports:
+      - "1883:1883"
+
+  robot-service:
+    build:
+      dockerfile: Dockerfile
+      context: .
