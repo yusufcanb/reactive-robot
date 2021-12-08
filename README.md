@@ -51,11 +51,26 @@ python tests/mqtt/publish.py localhost 1883
 ```
 ## Examples
 
+In this section you can find example implementations with different message brokers;
+You need **`docker`** and **`docker-compose`** in order to execute example projects.
+
 ### Robot Service with MQTT Broker
 
+Navigate to the `examples/mqtt`
 ```
 cd examples/mqtt
+```
+
+Then start containers with below; 
+
+```
 docker-compose up
+```
+
+Finally, trigger an event to see your robots are running;
+
+```
+docker-compose exec mqtt-broker /opt/hivemq-4.7.2/tools/mqtt-cli/bin/mqtt pub --topic basic --message TEST_VAR:321
 ```
 
 ## Recipes
