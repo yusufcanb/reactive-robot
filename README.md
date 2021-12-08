@@ -8,6 +8,14 @@
 
 This project aims to turn Robot Framework projects into event-driven services using popular message brokers like RabbitMQ, Kafka or MQTT.
 
+## Installation
+
+You can install reactive-robot into projects using pip;
+
+```
+pip install reactive-robot
+```
+
 ## Usage
 
 Create a definition file called `reactive-robot.yml` then paste following configuration;
