@@ -1,0 +1,2 @@
+importlib-metadata==4.8.2
+robotframework==4.1.2
