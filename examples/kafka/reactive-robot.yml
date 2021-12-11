@@ -1,0 +1,15 @@
+service_name: Demo Robot Service (Kafka)
+service_version: 1.0.0
+
+connector:
+  driver: reactive_robot.connectors.kafka.KafkaConnector
+  connection_url: kafka://localhost:9092
+  args:
+    group_id: reactive-robot
+
+bindings:
+  - name: Basic Robot
+    topic: basic
+    robot:
+      file: tasks/basic.robot
+      args: null
