@@ -3,7 +3,7 @@ service_version: 1.0.0
 
 connector:
   driver: reactive_robot.connectors.kafka.KafkaConnector
-  connection_url: kafka://localhost:9092
+  connection_url: kafka://kafka-broker:9092
   args:
     group_id: reactive-robot
 
