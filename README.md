@@ -62,6 +62,26 @@ python tests/mqtt/publish.py localhost 1883
 In this section you can find example implementations with different message brokers;
 You need **`docker`** and **`docker-compose`** in order to execute example projects.
 
+### Robot Service with Kafka Broker
+
+Navigate to the `examples/kafka`
+```
+cd examples/kafka
+```
+
+Then start containers with below; 
+
+```
+docker-compose up
+```
+
+Finally, trigger an event in basic topic to see your robots are running;
+
+```
+docker-compose exec robot-service python /opt/service/publish.py basic 
+```
+
+
 ### Robot Service with MQTT Broker
 
 Navigate to the `examples/mqtt`
