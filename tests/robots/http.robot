@@ -1,7 +1,7 @@
 *** Settings ***
 Library                 RequestsLibrary
 
-*** Test Cases ***
+*** Tasks ***
 
 Quick Get Request Test
     ${response}=        GET         https://www.google.com/

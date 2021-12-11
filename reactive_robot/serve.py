@@ -35,8 +35,10 @@ def serve(config: ReactiveRobotModel):
 
     cls = _get_connector(config.connector.driver)
     connector = cls()
+    connector.variable_parser = None
     coroutine = loop.run_in_executor(None, lambda: connector.bind(connection_url=config.connector.connection_url,
-                                                                  bindings=config.bindings))
+                                                                  bindings=config.bindings,
+                                                                  **config.connector.args))
 
     logger.info(
         "%s Service Version %s has been started. Waiting for events." % (config.service_name, config.service_version))

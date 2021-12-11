@@ -6,6 +6,7 @@ from reactive_robot.models import ReactiveRobotModel
 class ConnectorSchema(Schema):
     driver = fields.String()
     connection_url = fields.String()
+    args = fields.Dict()
 
 
 class RobotArgsSchema(Schema):
