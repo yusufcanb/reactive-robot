@@ -27,11 +27,13 @@ class RobotModel(Model):
 class ConnectorModel(Model):
     driver: str
     connection_url: str
+    args: dict
     variable_parser = RawPayloadParser()
 
     def __init__(self, *args, **kwargs):
         self.driver = kwargs.pop("driver")
         self.connection_url = urlparse(kwargs.pop("connection_url"))
+        self.args = kwargs.pop("args", {})
         super(ConnectorModel, self).__init__(*args, **kwargs)
 
 
