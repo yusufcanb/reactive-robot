@@ -9,13 +9,9 @@ class ConnectorSchema(Schema):
     args = fields.Dict()
 
 
-class RobotArgsSchema(Schema):
-    pass
-
-
 class RobotSchema(Schema):
     file = fields.Field()
-    args = fields.Nested(RobotArgsSchema(), required=False, allow_none=True)
+    args = fields.String(allow_none=True)
 
 
 class BindingSchema(Schema):

@@ -8,7 +8,7 @@ import paho.mqtt.client as mqtt
 
 from reactive_robot.connectors.base import Connector
 from reactive_robot.models import BindingModel
-from reactive_robot.parsers.string import RawPayloadParser
+from reactive_robot.constants import EVENT_PAYLOAD_VARIABLE
 
 logger = logging.getLogger("reactive_robot.connectors.mqtt")
 
@@ -17,7 +17,7 @@ def _run_job(variables: List[str], binding: BindingModel):
     variable_cli = ["-v " + "".join(var) for var in variables]
     with tempfile.TemporaryDirectory() as tmpdirname:
         cmd = " ".join(["robot",
-                        "--outputdir", tmpdirname,
+                        binding.robot.args if binding.robot.args else f"--outputdir {tmpdirname}",
                         " ".join(variable_cli),
                         binding.robot.file])
 
@@ -45,8 +45,12 @@ class MQTTConnector(mqtt.Client, Connector):
     def on_message(self, mqttc, obj, msg):
         logger.info(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
         binding = _find_binding_by_topic(msg.topic, self.bindings)
-        parser = RawPayloadParser()
-        self.executor.submit(_run_job, parser.get_variables(msg.payload), binding)
+        if self.variable_parser is not None:
+            variables = []
+        else:
+            variables = []
+        variables.append(f"{EVENT_PAYLOAD_VARIABLE}:{msg.payload.decode('utf-8')}")
+        self.executor.submit(_run_job, variables, binding)
 
     def on_publish(self, mqttc, obj, mid):
         logger.debug("mid: " + str(mid))

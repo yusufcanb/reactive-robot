@@ -7,6 +7,7 @@ from kafka import KafkaConsumer
 
 from reactive_robot.connectors.base import Connector
 from reactive_robot.models import BindingModel
+from reactive_robot.constants import EVENT_PAYLOAD_VARIABLE
 
 import logging
 
@@ -39,5 +40,5 @@ class KafkaConnector(Connector):
 
             for b in bindings:
                 if b.topic == message.topic:
-                    variables.append("REACTIVE_ROBOT_RECEIVED_MSG:%s" % message.value.decode("utf-8"))
+                    variables.append(f"${EVENT_PAYLOAD_VARIABLE}:${message.value.decode('utf-8')}")
                     self.executor.submit(self._run_job, variables, b)
