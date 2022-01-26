@@ -1,6 +1,7 @@
 .venv/
 venv/
 .idea/
+dist/
 
 *.pyc
 **/__pycache__
