@@ -8,7 +8,7 @@ import paho.mqtt.client as mqtt
 
 from reactive_robot.connectors.base import Connector
 from reactive_robot.models import BindingModel
-from reactive_robot.constants import EVENT_PAYLOAD_VARIABLE
+from reactive_robot.constants import EVENT_PAYLOAD_VARIABLE, EVENT_TOPIC_VARIABLE
 
 logger = logging.getLogger("reactive_robot.connectors.mqtt")
 
@@ -28,7 +28,9 @@ def _run_job(variables: List[str], binding: BindingModel):
 def _find_binding_by_topic(topic_name: str, bindings: List[BindingModel]):
     for b in bindings:
         if b.topic == topic_name:
+            logger.debug("Topic [%s] matched with binding [%s]" % (topic_name, b.name))
             return b
+    logger.error("No binding matched for topic [%s], skipping" % topic_name)
 
 
 class MQTTConnector(mqtt.Client, Connector):
@@ -50,6 +52,7 @@ class MQTTConnector(mqtt.Client, Connector):
         else:
             variables = []
         variables.append(f"{EVENT_PAYLOAD_VARIABLE}:{msg.payload.decode('utf-8')}")
+        variables.append(f"{EVENT_TOPIC_VARIABLE}:{msg.topic}")
         self.executor.submit(_run_job, variables, binding)
 
     def on_publish(self, mqttc, obj, mid):
