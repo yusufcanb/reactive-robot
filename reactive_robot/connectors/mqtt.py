@@ -1,7 +1,4 @@
 import logging
-import subprocess
-import tempfile
-from typing import List
 from urllib.parse import ParseResult
 
 import paho.mqtt.client as mqtt
@@ -11,33 +8,6 @@ from reactive_robot.models import BindingModel
 from reactive_robot.constants import EVENT_PAYLOAD_VARIABLE, EVENT_TOPIC_VARIABLE
 
 logger = logging.getLogger("reactive_robot.connectors.mqtt")
-
-
-def _run_job(variables: List[str], binding: BindingModel):
-    variable_cli = ["-v " + "".join(var) for var in variables]
-    with tempfile.TemporaryDirectory() as tmpdirname:
-        cmd = " ".join(
-            [
-                "robot",
-                binding.robot.args
-                if binding.robot.args
-                else f"--outputdir {tmpdirname}",
-                " ".join(variable_cli),
-                binding.robot.file,
-            ]
-        )
-
-        logger.info("Executing cmd, %s" % cmd)
-        subprocess.run(cmd.split(" "))
-
-
-def _find_binding_by_topic(topic_name: str, bindings: List[BindingModel]):
-    for b in bindings:
-        if b.topic == topic_name:
-            logger.debug("Topic [%s] matched with binding [%s]" % (topic_name, b.name))
-            return b
-    logger.error("No binding matched for topic [%s], skipping" % topic_name)
-
 
 class MQTTConnector(mqtt.Client, Connector):
     def __init__(self, *args, **kwargs):
@@ -51,14 +21,14 @@ class MQTTConnector(mqtt.Client, Connector):
 
     def on_message(self, mqttc, obj, msg):
         logger.info(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
-        binding = _find_binding_by_topic(msg.topic, self.bindings)
+        binding = self.find_binding_by_topic(msg.topic)
         if self.variable_parser is not None:
             variables = []
         else:
             variables = []
         variables.append(f"{EVENT_PAYLOAD_VARIABLE}:{msg.payload.decode('utf-8')}")
         variables.append(f"{EVENT_TOPIC_VARIABLE}:{msg.topic}")
-        self.executor.submit(_run_job, variables, binding)
+        self.executor.submit(self.run_robot, variables, binding)
 
     def on_publish(self, mqttc, obj, mid):
         logger.debug("mid: " + str(mid))

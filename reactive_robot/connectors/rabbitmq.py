@@ -15,18 +15,6 @@ logger = logging.getLogger("reactive_robot.connectors.rabbitmq")
 
 class RabbitMQConnector(Connector):
 
-    def _run_robot(self, topic, message):
-        for b in self.bindings:
-            if b.topic == topic:
-                with tempfile.TemporaryDirectory() as tmpdirname:
-                    cmd = " ".join(["robot",
-                                    "--outputdir", tmpdirname,
-                                    b.robot.file])
-
-                    logger.info("Executing cmd, %s" % cmd)
-                    result = subprocess.run(cmd.split(" "))
-                    logger.info("Execution finished with return code %s" % result.returncode)
-
     def _map_binding(self, channel, binding: BindingModel):
         channel.exchange_declare(exchange=binding.topic, exchange_type='fanout')
 
@@ -38,7 +26,7 @@ class RabbitMQConnector(Connector):
 
     def on_message(self, ch, method, properties, body):
         logger.info("Received message %s from channel %s" % (body, method.exchange))
-        self.executor.submit(lambda: self._run_robot(method.exchange, body))
+        self.executor.submit(lambda: self.run_robot(method.exchange, body))
 
     def bind(self, connection_url: ParseResult, bindings: Iterable[BindingModel]):
         connection = pika.BlockingConnection(pika.URLParameters(connection_url.geturl()))
