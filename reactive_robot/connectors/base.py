@@ -1,6 +1,6 @@
 import logging
+from typing import List
 from abc import ABC, abstractmethod
-from collections.abc import Iterable
 from concurrent.futures.thread import ThreadPoolExecutor
 from urllib.parse import ParseResult
 
@@ -10,14 +10,13 @@ from reactive_robot.parsers.base import BaseParser
 
 logger = logging.getLogger("reactive_robot.connectors.base")
 
-
 class Connector(ABC):
     """
     Base class for connectors.
     Connectors are for handling to event source configurations.
     """
 
-    bindings: Iterable[BindingModel]
+    bindings: List[BindingModel]
     variable_parser: BaseParser
     executor = ThreadPoolExecutor(max_workers=MAX_WORKER)
 
@@ -25,5 +24,5 @@ class Connector(ABC):
         logger.info("Thread executor initialized with %s workers" % MAX_WORKER)
 
     @abstractmethod
-    def bind(self, connection_url: ParseResult, bindings: Iterable[BindingModel]):
+    def bind(self, connection_url: ParseResult, bindings: List[BindingModel], **kwargs):
         raise NotImplemented

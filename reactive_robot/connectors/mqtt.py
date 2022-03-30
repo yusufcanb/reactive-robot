@@ -16,10 +16,16 @@ logger = logging.getLogger("reactive_robot.connectors.mqtt")
 def _run_job(variables: List[str], binding: BindingModel):
     variable_cli = ["-v " + "".join(var) for var in variables]
     with tempfile.TemporaryDirectory() as tmpdirname:
-        cmd = " ".join(["robot",
-                        binding.robot.args if binding.robot.args else f"--outputdir {tmpdirname}",
-                        " ".join(variable_cli),
-                        binding.robot.file])
+        cmd = " ".join(
+            [
+                "robot",
+                binding.robot.args
+                if binding.robot.args
+                else f"--outputdir {tmpdirname}",
+                " ".join(variable_cli),
+                binding.robot.file,
+            ]
+        )
 
         logger.info("Executing cmd, %s" % cmd)
         subprocess.run(cmd.split(" "))
@@ -34,7 +40,6 @@ def _find_binding_by_topic(topic_name: str, bindings: List[BindingModel]):
 
 
 class MQTTConnector(mqtt.Client, Connector):
-
     def __init__(self, *args, **kwargs):
         super(MQTTConnector, self).__init__(*args, **kwargs)
 
@@ -64,7 +69,7 @@ class MQTTConnector(mqtt.Client, Connector):
     def on_log(self, mqttc, obj, level, string):
         logger.debug(string)
 
-    def bind(self, connection_url: ParseResult, bindings=None):
+    def bind(self, connection_url: ParseResult, bindings=None, **kwargs):
         if bindings is None:
             bindings = []
 
