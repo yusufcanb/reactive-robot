@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "reactive-robot"
-version = "0.1.0-alpha.3"
+version = "0.1.0-alpha.4"
 description = "Fastest way to turn your robot workflows into event driven service."
 authors = ["Yusuf Can Bayrak <yusufcanbayrak@gmail.com>"]
 license = "Apache-2.0"
