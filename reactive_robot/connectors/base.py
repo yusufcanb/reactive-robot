@@ -1,6 +1,7 @@
 import subprocess
 import logging
 import tempfile
+import base64
 
 from typing import List
 from abc import ABC, abstractmethod
@@ -26,6 +27,12 @@ class Connector(ABC):
 
     def __init__(self):
         logger.info("Thread executor initialized with %s workers" % MAX_WORKER)
+
+    def encode_payload_to_base64(self, payload: bytes) -> str:
+        """
+        Convert incoming payload to base64 string to avoid security risks.
+        """
+        return base64.b64encode(payload).decode("utf-8")
 
     def run_robot(self, variables: List[str], binding: BindingModel):
         variable_cli = ["-v " + "".join(var) for var in variables]

@@ -4,14 +4,17 @@ from urllib.parse import ParseResult
 import paho.mqtt.client as mqtt
 
 from reactive_robot.connectors.base import Connector
-from reactive_robot.models import BindingModel
 from reactive_robot.constants import EVENT_PAYLOAD_VARIABLE, EVENT_TOPIC_VARIABLE
 
 logger = logging.getLogger("reactive_robot.connectors.mqtt")
 
+
 class MQTTConnector(mqtt.Client, Connector):
     def __init__(self, *args, **kwargs):
         super(MQTTConnector, self).__init__(*args, **kwargs)
+
+    def _has_wildcard(self, topic: str):
+        return "+" in topic or "#" in topic
 
     def on_connect(self, mqttc, obj, flags, rc):
         logger.info("rc: " + str(rc) + "rc")
@@ -26,7 +29,7 @@ class MQTTConnector(mqtt.Client, Connector):
             variables = []
         else:
             variables = []
-        variables.append(f"{EVENT_PAYLOAD_VARIABLE}:{msg.payload.decode('utf-8')}")
+        variables.append(f"{EVENT_PAYLOAD_VARIABLE}:{self.encode_payload_to_base64(msg.payload)}")
         variables.append(f"{EVENT_TOPIC_VARIABLE}:{msg.topic}")
         self.executor.submit(self.run_robot, variables, binding)
 
