@@ -1,5 +1,6 @@
 *** Settings ***
 
 *** Tasks ***
-    Demo Task
-        Log   "Done!"
+Demo Task
+    Log Variables
+    Log   "Done!"
