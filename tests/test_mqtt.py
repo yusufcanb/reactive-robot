@@ -22,3 +22,11 @@ def test_mqtt_topics_are_equals():
     topic2 = MqttTopic("device/abcdd12/temperture/1/value")
 
     assert (topic1 == topic2) is True
+
+    topic1 = MqttTopic("device/#")
+    topic2 = MqttTopic("device/asbdf/temperture/r23r")
+    topic3 = MqttTopic("device/asbdf/coordinate")
+
+    assert (topic1 == topic2) is True
+    assert (topic1 == topic3) is True
+    assert (topic2 == topic3) is False

@@ -35,8 +35,15 @@ class MqttTopic(object):
             return True
 
         if self.has_sharp_sign() or mqtt_topic.has_sharp_sign():
-            raise NotImplementedError("Wildcard <#> not implemented yet.")
+            if self.has_sharp_sign():
+                t1 = self.topic.replace("#", "")
+                t2 = mqtt_topic.topic
+            else:
+                t1 = mqtt_topic.topic.replace("#", "")
+                t2 = self.topic
 
+            if t1 in t2:
+                return True
         return False
 
     def has_plus_sign(self):
