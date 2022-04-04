@@ -61,4 +61,4 @@ class Connector(ABC):
 
     @abstractmethod
     def bind(self, connection_url: ParseResult, bindings: List[BindingModel], **kwargs):
-        raise NotImplemented
+        raise NotImplementedError
