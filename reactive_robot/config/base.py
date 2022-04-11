@@ -1,14 +1,18 @@
 import logging
 import os
 import yaml
+from pprint import pformat
 from contextlib import contextmanager
 
 from marshmallow.exceptions import ValidationError
 
 from reactive_robot.config.schema import RxRobotConfigSchema
-from reactive_robot.exceptions import InvalidConfigurationFileException, ConfigurationFileNotExists
+from reactive_robot.exceptions import (
+    InvalidConfigurationFileException,
+    ConfigurationFileNotExists,
+)
 
-log = logging.getLogger('reactive_robot.config')
+log = logging.getLogger("reactive_robot.config")
 
 
 @contextmanager
@@ -25,12 +29,12 @@ def _open_config_file(config_file):
 
     # Default to the standard config filename.
     if config_file is None:
-        paths_to_try = ['reactive-robot.yml', 'reactive-robot.yaml']
+        paths_to_try = ["reactive-robot.yml", "reactive-robot.yaml"]
     # If it is a string, we can assume it is a path and attempt to open it.
     elif isinstance(config_file, str):
         paths_to_try = [config_file]
     # If closed file descriptor, get file path to reopen later.
-    elif getattr(config_file, 'closed', False):
+    elif getattr(config_file, "closed", False):
         paths_to_try = [config_file.name]
     else:
         paths_to_try = None
@@ -39,24 +43,25 @@ def _open_config_file(config_file):
         # config_file is not a file descriptor, so open it as a path.
         for path in paths_to_try:
             path = os.path.abspath(path)
-            log.debug(f"Trying to load configuration file: {path}")
+            log.info(f"Trying to load configuration file: {path}")
             try:
-                config_file = open(path, 'rb')
+                config_file = open(path, "rb")
                 break
             except FileNotFoundError:
                 log.info(f"Config file '{path}' does not exist.")
                 continue
         else:
             log.error(f"Config file '{paths_to_try[0]}' does not exist.")
-            raise ConfigurationFileNotExists(f"Config file '{paths_to_try[0]}' does not exist.")
+            raise ConfigurationFileNotExists(
+                f"Config file '{paths_to_try[0]}' does not exist."
+            )
     else:
         log.debug(f"Trying to load configuration file: {config_file}")
-        config_file.seek(0)
 
     try:
         yield config_file
     finally:
-        if hasattr(config_file, 'close'):
+        if hasattr(config_file, "close"):
             config_file.close()
 
 
@@ -81,11 +86,11 @@ def load_config(config_file=None, **kwargs):
     config_schema = RxRobotConfigSchema()
     with _open_config_file(config_file) as fd:
         data = yaml.safe_load(fd)
-        log.debug("Reading YAML file, %s " % data)
+        log.debug(f"Parsed configuration -> \n{pformat(data)}")
         try:
             dump = config_schema.load(data, unknown=True)
         except ValidationError as e:
             raise InvalidConfigurationFileException(e.messages)
 
-    log.debug("Using schema %s" % dump)
+    log.debug("Config object created -> %s " % dump)
     return dump

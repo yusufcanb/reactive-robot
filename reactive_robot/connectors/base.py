@@ -48,7 +48,13 @@ class Connector(ABC):
                 ]
             )
             logger.info("Executing cmd, %s" % cmd)
-            subprocess.run(cmd.split(" "))
+            return_code = subprocess.call(
+                cmd.split(" "), stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL
+            )
+            if return_code == 0:
+                logger.info(f"{binding.name} executed successfully ")
+            else:
+                logger.error(f"{binding.name} failed. RC: {return_code}")
 
     def find_binding_by_topic(self, topic_name: str):
         for b in self.bindings:

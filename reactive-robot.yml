@@ -2,20 +2,26 @@ service_name: Simple Robot Service
 service_version: 1.0.0
 
 connector:
-  driver: reactive_robot.connectors.kafka.KafkaConnector
-  connection_url: kafka://localhost:9092
+  driver: reactive_robot.connectors.mqtt.MQTTConnector
+  connection_url: mqtt://localhost:1883
   args:
-    group_id: reactive-robot
+    client_id: rr-1
 
 bindings:
-  - name: Hello World
-    topic: robot.hw
+  - name: Gateway Stats
+    topic: gateway/+/meta/stats
     robot:
       file: tests/robots/hello-world.robot
-      args: null
+      args: --rpa --output NONE --report NONE --log NONE
 
-  - name: Basic Robot
-    topic: robot.basic
+  - name: Sensor Stats
+    topic: sensor/+/meta/stats
     robot:
       file: tests/robots/basic.robot
-      args: null
+      args: --rpa --output NONE --report NONE --log NONE
+
+  - name: Sensor Telemetry
+    topic: sensor/+/telemetry
+    robot:
+      file: tests/robots/basic.robot
+      args: --rpa --output NONE --report NONE --log NONE
