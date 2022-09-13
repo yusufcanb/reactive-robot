@@ -4,6 +4,9 @@
 ![pypi-badge](https://img.shields.io/pypi/v/reactive-robot)
 ![stable](https://img.shields.io/static/v1?label=status&message=alpha-phase&color=yellow)
 
+[![Robocon 2022](https://img.youtube.com/vi/UTwDfGYj3lw/0.jpg)](https://www.youtube.com/watch?v=UTwDfGYj3lw)
+
+
 ## Mission
 
 This project aims to turn Robot Framework projects into event-driven services using popular message brokers like RabbitMQ, Kafka or MQTT.
